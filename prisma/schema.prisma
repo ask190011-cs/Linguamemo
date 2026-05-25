@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  passwordHash   String
+  nativeLanguage String?
+  createdAt      DateTime @default(now())
+
+  cards Card[]
+}
+
+model Word {
+  id                 String  @id @default(cuid())
+  language           String
+  text               String
+  translation        String
+  pronunciation      String?
+
+  // NEW
+  partOfSpeech       String?
+  exampleSentence    String?
+  exampleTranslation String?
+
+  cards Card[]
+}
+
+model Card {
+  id           String   @id @default(cuid())
+  mnemonic     String
+  intervalDays Int      @default(1)
+  easeFactor   Float    @default(2.5)
+  nextReview   DateTime
+  lastReviewed DateTime?
+
+  userId String
+  wordId String
+
+  user User @relation(fields: [userId], references: [id])
+  word Word @relation(fields: [wordId], references: [id])
+
+  reviews Review[]
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  score      String
+  reviewedAt DateTime @default(now())
+
+  cardId String
+  card   Card @relation(fields: [cardId], references: [id])
+}
