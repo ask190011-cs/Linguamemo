@@ -52,9 +52,92 @@ export default function Flashcard({
       easy: 0,
     });
 
+
+    useEffect(() => {
+        function handleKeyDown(
+          e: KeyboardEvent
+        ) {
+          if (
+            index >=
+            cards.length
+          ) {
+            return;
+          }
+    
+          if (
+            !revealed &&
+            e.code ===
+              "Space"
+          ) {
+            e.preventDefault();
+    
+            revealAnswer();
+          }
+    
+          if (
+            revealed
+          ) {
+            switch (
+              e.key
+            ) {
+              case "1":
+                handleReview(
+                  "again"
+                );
+                break;
+    
+              case "2":
+                handleReview(
+                  "hard"
+                );
+                break;
+    
+              case "3":
+                handleReview(
+                  "good"
+                );
+                break;
+    
+              case "4":
+                handleReview(
+                  "easy"
+                );
+                break;
+    
+              case "p":
+              case "P":
+                speakWord();
+                break;
+            }
+          }
+        }
+    
+        window.addEventListener(
+          "keydown",
+          handleKeyDown
+        );
+    
+        return () =>
+          window.removeEventListener(
+            "keydown",
+            handleKeyDown
+          );
+      }, [
+        revealed,
+        index,
+        cards.length,
+      ]);
+
   const card =
     cards[index];
 
+  if (!card) {
+     return (
+      <div className="p-6 text-center">
+        Review complete 🎉
+      </div>
+    );
+  }
   const progress =
     ((index + 1) /
       cards.length) *
@@ -237,80 +320,7 @@ export default function Flashcard({
     }
   }
 
-  useEffect(() => {
-    function handleKeyDown(
-      e: KeyboardEvent
-    ) {
-      if (
-        index >=
-        cards.length
-      ) {
-        return;
-      }
 
-      if (
-        !revealed &&
-        e.code ===
-          "Space"
-      ) {
-        e.preventDefault();
-
-        revealAnswer();
-      }
-
-      if (
-        revealed
-      ) {
-        switch (
-          e.key
-        ) {
-          case "1":
-            handleReview(
-              "again"
-            );
-            break;
-
-          case "2":
-            handleReview(
-              "hard"
-            );
-            break;
-
-          case "3":
-            handleReview(
-              "good"
-            );
-            break;
-
-          case "4":
-            handleReview(
-              "easy"
-            );
-            break;
-
-          case "p":
-          case "P":
-            speakWord();
-            break;
-        }
-      }
-    }
-
-    window.addEventListener(
-      "keydown",
-      handleKeyDown
-    );
-
-    return () =>
-      window.removeEventListener(
-        "keydown",
-        handleKeyDown
-      );
-  }, [
-    revealed,
-    index,
-    cards.length,
-  ]);
 
   if (
     index >=
